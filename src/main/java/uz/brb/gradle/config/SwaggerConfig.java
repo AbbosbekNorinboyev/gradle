@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "SPRING TEMPLATE",
+                title = "GRADLE PROJECT",
                 version = "2.6.0",
-                description = "SPRING TEMPLATE Documentation"),
-        servers = @Server(url = "http://localhost:2212", description = "Local Server"),
+                description = "GRADLE PROJECT Documentation"),
+        servers = @Server(url = "http://localhost:2026", description = "Local Server"),
         security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(

@@ -1,14 +1,6 @@
 package uz.brb.gradle.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
-import uz.brb.gradle.exception.InvalidHeadersException;
-import uz.brb.gradle.exception.JsonConversionException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,52 +9,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Set;
 
 @Slf4j
 public class Util {
-    public static String convertObjectToJsonString(Object object) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = null;
-        try {
-            jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new JsonConversionException("Failed to convert object to JSON", e);
-        }
-        return jsonString;
-    }
-
-    public static void validate(Object validate) {
-        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
-            Validator validator = factory.getValidator();
-
-            Set<ConstraintViolation<Object>> violations = validator.validate(validate);
-            if (!violations.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                for (ConstraintViolation<Object> violation : violations) {
-                    String interpolatedMessage = violation.getMessage();
-                    String propertyPath = violation.getPropertyPath().toString();
-                    sb.append(propertyPath)
-                            .append(": ")
-                            .append(interpolatedMessage)
-                            .append(System.lineSeparator());
-                }
-                throw new RuntimeException(sb.toString());
-            }
-        }
-    }
-
-    public static void validateHeader(Object validate, String errMessage) {
-        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
-            Validator validator = factory.getValidator();
-
-            var violations = validator.validate(validate);
-            if (!violations.isEmpty()) {
-                throw new InvalidHeadersException(errMessage);
-            }
-        }
-    }
-
     public static String dateTimeFormatter(Date date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS");
 
