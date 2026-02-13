@@ -4,3 +4,122 @@ server:
 spring:
   application:
     name: gradle
+
+  # PostgreSQL config
+  datasource:
+    url: jdbc:postgresql://localhost:5432/project?currentSchema=gradle
+    username: postgres
+    password: 2210
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      maximum-pool-size: 30             # maksimal ulanishlar soni
+      leak-detection-threshold: 60000
+      # HikariCP specific settings
+      minimum-idle: 5                   # bo?sh turgan minimal ulanishlar
+      connection-timeout: 30000         # 30s ichida ulanish bo?lmasa xato beradi
+      idle-timeout: 60000               # ulanish bo?sh tursa 30s dan keyin yopiladi
+      max-lifetime: 1800000             # ulanish 30 daqiqadan keyin yangilanadi
+
+  # JPA (Hibernate) config
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Redis config
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 2
+      connect-timeout: 6000ms
+      timeout: 3000ms
+      repositories:
+        enabled: true
+  cache:
+    type: redis
+
+# Swagger config
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    tags-sorter: alpha                # Tag?larni alifbo tartibida ko?rsatadi
+    doc-expansion: none               # Swagger?da barcha bo?limlar yopiq holda chiqadi (collapsed)
+    try-it-out-enabled: true          # "Try it out" tugmasini o?chiradi (foydalanuvchi swagger orqali API chaqira olmaydi)
+    default-model-expand-depth: 10    # Model (schema) larni nechta chuqurlikda expand qilishini belgilaydi
+    operations-sorter: method         # metodlarni tartib bilan ko?rsatadi (GET, POST, PUT...)
+    display-request-duration: true    # har bir request qancha vaqt olganini ko?rsatadi
+
+# Spring Boot Actuator config
+management:
+  endpoint:
+    health:
+      show-details: always   # health check natijasida barcha detallarni ko?rsatish
+    caches:
+      access: none
+    metrics:
+      access: read_only
+    heapdump:
+      access: none
+    loggers:
+      access: none
+    threaddump:
+      access: none
+    beans:
+      access: none
+    env:
+      access: none
+    prometheus:
+      access: read_only
+    info:
+      access: read_only
+    configprops:
+      access: none
+  endpoints:
+    web:
+      exposure:
+        # qaysi endpointlar tashqariga ochiladi
+        include:
+          - health
+          - caches
+          - metrics
+          - heapdump
+          - loggers
+          - threaddump
+          - beans
+          - env
+          - prometheus
+          - info
+          - configprops
+        exclude: shutdown   # shutdown xavfli, odatda yopiladi
+
+  # Metrics config
+  metrics:
+    tags:
+      application: ${spring.application.name}   # Prometheus/Grafana uchun app tag qo?shish
+
+  # Health Check config
+  health:
+    db:
+      enabled: true          # DB health check yoqilgan
+    diskspace:
+      enabled: true          # Disk bo?sh joyini tekshiradi
+    ping:
+      enabled: true          # Ping check
+    redis:
+      enabled: true
+
+  # Zipkin config
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
