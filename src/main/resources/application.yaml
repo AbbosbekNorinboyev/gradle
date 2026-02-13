@@ -1,0 +1,6 @@
+server:
+  port: 2026
+
+spring:
+  application:
+    name: gradle
